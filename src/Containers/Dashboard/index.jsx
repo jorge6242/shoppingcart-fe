@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
 import AppBar from "@material-ui/core/AppBar";
+import Badge from "@material-ui/core/Badge";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Divider from "@material-ui/core/Divider";
 import Drawer from "@material-ui/core/Drawer";
@@ -28,12 +29,15 @@ import MenuItem from "@material-ui/core/MenuItem";
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import TextField from "@material-ui/core/TextField";
-import Fab from '@material-ui/core/Fab';
-import AddIcon from '@material-ui/icons/Add'
+import Fab from "@material-ui/core/Fab";
+import AddIcon from "@material-ui/icons/Add";
 import { logout } from "../../Actions/loginActions";
 import styles from "./style";
-import { updateModal } from '../../Actions/modalActions';
+import { updateModal } from "../../Actions/modalActions";
+import { search } from "../../Actions/productActions";
 import Product from "../Product";
+import handleDebounce from "../../helpers/handleDebounce";
+import Main from "../../Components/Main";
 
 /**
  * Class to show the main app.
@@ -51,11 +55,19 @@ class Dashboard extends React.Component {
   };
 
   handleClick = () => {
-    this.props.updateModal({ payload: { status: true, title: 'Create Product' , element: <Product /> } })
-  }
+    this.props.updateModal({
+      payload: { status: true, title: "Create Product", element: <Product /> }
+    });
+  };
+
+  handleSearch = event => {
+    const { category } = this.props;
+    this.props.search(category, event.value);
+  };
 
   render() {
-    const { classes, theme, history } = this.props;
+    const { classes, theme, history, myCart } = this.props;
+    const cart = myCart.filter(cart => cart.status === 1);
     const drawer = (
       <div>
         <div className={classes.toolbar}>
@@ -68,7 +80,7 @@ class Dashboard extends React.Component {
             <Grid item xs={12} className={classes.customSelect}>
               <FormControl className={classes.formControl}>
                 <Select value={1}>
-                  <MenuItem value={1}>heyfromjonathan</MenuItem>
+                  <MenuItem value={1}>usertest</MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -76,23 +88,28 @@ class Dashboard extends React.Component {
         </div>
         <Divider />
         <List>
-          <ListItem button onClick={() => history.push('/dashboard/products')}>
+          <ListItem button onClick={() => history.push("/dashboard/products")}>
             <ListItemIcon>
-              <ListIcon />         
+              <ListIcon />
             </ListItemIcon>
             <ListItemText primary={"Products"} />
           </ListItem>
-          <ListItem button onClick={() => history.push('/dashboard/cart')}>
+          <ListItem button onClick={() => history.push("/dashboard/cart")}>
             <ListItemIcon>
-              <ShoppingCart />
+              <Badge badgeContent={cart.length} invisible={cart.length > 0 ? false : true} color="primary">
+                <ShoppingCart />
+              </Badge>
             </ListItemIcon>
             <ListItemText primary={"Shopping Cart"} />
           </ListItem>
-          <ListItem button onClick={() => history.push('/dashboard/my-shopping')}>
+          <ListItem
+            button
+            onClick={() => history.push("/dashboard/my-shopping")}
+          >
             <ListItemIcon>
               <ShoppingBasket />
             </ListItemIcon>
-            <ListItemText primary={"My shopping"} />
+            <ListItemText primary={"My shoppings"} />
           </ListItem>
           <ListItem button onClick={() => this.props.logout()}>
             <ListItemIcon>
@@ -127,7 +144,7 @@ class Dashboard extends React.Component {
                     <TextField
                       id="input-with-icon-grid"
                       label="Search"
-                      onChange={this.handleSearch}
+                      onChange={handleDebounce(this.handleSearch, 3000)}
                     />
                   </Grid>
                 </Grid>
@@ -165,17 +182,13 @@ class Dashboard extends React.Component {
         </nav>
         <main className={classes.content}>
           <div className={classes.toolbar} />
-          {this.props.children ? this.props.children : null}
-          <div className={classes.addButton}>
-          <Fab
-            color="primary"
-            aria-label="Add"
-            onClick={this.handleClick}
-          >
+          {this.props.children ? this.props.children : <Main />}
+        </main>
+        <div className={classes.addButton}>
+          <Fab color="primary" aria-label="Add" onClick={this.handleClick}>
             <AddIcon />
           </Fab>
-          </div>
-        </main>
+        </div>
       </div>
     );
   }
@@ -190,14 +203,17 @@ Dashboard.propTypes = {
   theme: PropTypes.object.isRequired
 };
 
+const mS = ({ productReducer: { category }, cartReducer: { myCart } }) => ({ category, myCart });
+
 const mD = {
   logout,
   updateModal,
+  search
 };
 
 export default withRouter(
   connect(
-    null,
+    mS,
     mD
   )(withStyles(styles, { withTheme: true })(Dashboard))
 );

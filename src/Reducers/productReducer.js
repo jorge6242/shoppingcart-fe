@@ -3,6 +3,8 @@ import { ACTIONS } from "../Actions/productActions";
 const initialState = {
   products: [],
   inputField: '',
+  isLoading: false,
+  category: '',
 };
 
 const productReducer = (state = initialState, action) => {
@@ -11,6 +13,16 @@ const productReducer = (state = initialState, action) => {
       return {
         ...state,
         products: action.payload
+      };
+    case ACTIONS.LOADING:
+      return {
+        ...state,
+        isLoading: action.payload
+      };
+    case ACTIONS.SET_CATEGORY:
+      return {
+        ...state,
+        category: action.payload
       };
     case ACTIONS.CLEAR:
       return {

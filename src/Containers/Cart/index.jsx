@@ -9,7 +9,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
-import { getAll, purchase } from "../../Actions/cartActions";
+import { getAll, purchase, clear } from "../../Actions/cartActions";
 import { updateModal } from "../../Actions/modalActions";
 import { Grid } from "@material-ui/core";
 
@@ -35,22 +35,26 @@ class Cart extends Component {
   handlePurchase = () => {
     this.props.purchase().then(res => {
       if (res.status === 200 || res.status === 201) {
-        this.props.getAll();
+        this.props.clear();
         this.props.updateModal({
           payload: { status: false, element: <div /> }
         });
       }
     });
   };
-  render() {
-    const { classes, myCart } = this.props;
-    let total =
+  getTotal = () => {
+    const { myCart } = this.props;
+    const total =
       myCart.length > 0
         ? _.sumBy(
             myCart,
             element => element.status === 1 && Math.round(element.product.price)
           )
         : 0;
+    return total;
+  }
+  render() {
+    const { classes, myCart } = this.props;
     return (
       <Grid container spacing={0}>
         <Grid item xs={12}>
@@ -80,7 +84,7 @@ class Cart extends Component {
                 <TableRow>
                   <TableCell>Total</TableCell>
                   <TableCell />
-                  <TableCell>${total}</TableCell>
+                  <TableCell>${this.getTotal()}</TableCell>
                 </TableRow>
               </TableBody>
             </Table>
@@ -104,6 +108,7 @@ const mS = ({ cartReducer: { myCart } }) => ({ myCart });
 
 const mD = {
   getAll,
+  clear,
   purchase,
   updateModal
 };

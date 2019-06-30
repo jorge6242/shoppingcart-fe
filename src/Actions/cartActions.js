@@ -4,6 +4,7 @@ import snackBarStatus from './snackbarActions';
 export const ACTIONS = {
     GET_ALL: 'cart/get_all',
     GET: 'cart/get',
+    CLEAR: 'cart/clear',
 };
 
 export const getAll = () => async dispatch => {
@@ -132,3 +133,5 @@ export const purchase = () => async dispatch => {
         return error;
     }
 };
+
+export const clear = () => ({ type: ACTIONS.CLEAR });

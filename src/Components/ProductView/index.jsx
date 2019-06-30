@@ -36,7 +36,7 @@ class EmailView extends Component {
     } = this.props;
     return (
       <Grid container spacing={0} className="product-view-container">
-        <Grid item xs={7} className="product-view-container__image-container">
+        <Grid item xs={6} className="product-view-container__image-container">
           <img src={photo} alt="Product detail" />
         </Grid>
         <Grid item xs={5} className="product-view-container__detail-container">

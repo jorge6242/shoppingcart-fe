@@ -1,6 +1,6 @@
-import AXIOS from '../Config/Axios';
-import headers from '../helpers/headers';
-import Prefix from '../Config/ApiPrefix';
+import AXIOS from "../Config/Axios";
+import headers from "../helpers/headers";
+import Prefix from "../Config/ApiPrefix";
 
 const Product = {
   getAll() {
@@ -10,26 +10,31 @@ const Product = {
     return AXIOS.post(
       `${Prefix.api}/product`,
       {
-        ...data,
+        ...data
       },
-      { headers: headers() },
+      { headers: headers() }
     );
   },
   get(id) {
     return AXIOS.get(`${Prefix.api}/product/${id}`, { headers: headers() });
   },
+  search(category, term) {
+    return AXIOS.get(`${Prefix.api}/product-search?category=${category}&term=${term}`, {
+      headers: headers()
+    });
+  },
   update(data) {
     return AXIOS.put(
       `${Prefix.api}/product/${data.id}`,
       {
-        ...data,
+        ...data
       },
-      { headers: headers() },
+      { headers: headers() }
     );
   },
   remove(id) {
     return AXIOS.delete(`${Prefix.api}/product/${id}`, { headers: headers() });
-  },
+  }
 };
 
 export default Product;

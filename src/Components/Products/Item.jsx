@@ -1,8 +1,10 @@
 import React from "react";
+import Fab from "@material-ui/core/Fab";
 import { Grid } from "@material-ui/core";
+import Chip from '@material-ui/core/Chip';
+import Edit from "@material-ui/icons/Edit";
 import Paper from "@material-ui/core/Paper";
 import Avatar from "@material-ui/core/Avatar";
-import Button from "@material-ui/core/Button";
 
 const Item = ({ product, classes, handleClick, handleEdit }) => (
   <Grid xs={2} className={classes.itemContainer}>
@@ -19,16 +21,24 @@ const Item = ({ product, classes, handleClick, handleEdit }) => (
             className={classes.avatar}
           />
         </Grid>
-        <Grid xs={12}>{product.name}</Grid>
-        <Grid xs={12}>{product.price}$</Grid>
+        <Grid xs={12} className={classes.itemTitle}>
+          {product.name}
+        </Grid>
+        <Grid xs={12} className={classes.price}>
+          {product.price}$
+        </Grid>
+        <Grid xs={12} className={classes.price}> 
+          <Chip color="secondary" label={product.category.name} className={classes.chip} />
+        </Grid>
         <Grid xs={12}>
-          <Button
-            variant="contained"
+          <Fab
             color="primary"
+            aria-label="Edit"
+            className={classes.fab}
             onClick={() => handleEdit(product)}
           >
-            Edit
-          </Button>
+            <Edit />
+          </Fab>
         </Grid>
       </Grid>
     </Paper>
