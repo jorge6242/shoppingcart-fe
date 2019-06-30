@@ -10,6 +10,7 @@ import {
   changeFormValue,
   setInputField,
   update,
+  search,
 } from "../../Actions/productActions";
 import { clear } from '../../Actions/productFormActions';
 import { getAll as getCategorys } from "../../Actions/categoryActions";
@@ -34,7 +35,7 @@ class Product extends Component {
     if (form.id === "") {
       this.props.create(form).then(res => {
         if (res.status === 200 || res.status === 201) {
-          this.props.getAll();
+          this.refresh();
           this.props.updateModal({
             payload: { status: false, element: <div /> }
           });
@@ -43,7 +44,7 @@ class Product extends Component {
     } else {
       this.props.update(form).then(res => {
         if (res.status === 200 || res.status === 201) {
-          this.props.getAll();
+          this.refresh();
           this.props.updateModal({
             payload: { status: false, element: <div /> }
           });
@@ -51,6 +52,15 @@ class Product extends Component {
       });
     }
   };
+
+  refresh = () => {
+    const { category } = this.props;
+    if (category) {
+      this.props.search(category, '');
+    } else {
+      this.props.getAll();
+    }
+  }
 
   triggerClick = input => {
     if (input) {
@@ -121,9 +131,9 @@ class Product extends Component {
 
 const mS = ({
   categoryReducer: { categorys },
-  productReducer: { inputField },
+  productReducer: { inputField, category },
   productFormReducer,
-}) => ({ categorys, inputField, productFormReducer });
+}) => ({ categorys, inputField, productFormReducer, category });
 
 const mD = {
   create,
@@ -135,6 +145,7 @@ const mD = {
   setInputField,
   update,
   clear,
+  search,
 };
 
 export default withRouter(
